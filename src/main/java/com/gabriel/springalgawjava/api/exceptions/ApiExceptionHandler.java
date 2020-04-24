@@ -1,10 +1,11 @@
 package com.gabriel.springalgawjava.api.exceptions;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gabriel.springalgawjava.domain.exceptions.DuplicatedResourceException;
+import com.gabriel.springalgawjava.domain.exceptions.ResourceException;
+import com.gabriel.springalgawjava.domain.exceptions.ResourceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -30,21 +31,31 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ApiException e = new ApiException();
         e.setStatusCode(status.value());
-        e.setTimestamp(LocalDateTime.now());
+        e.setTimestamp(OffsetDateTime.now());
         e.setMessage("One or more fields are invalid. Please check and try again.");
         e.setFields(getFieldsWithError(ex.getBindingResult()));
 
         return super.handleExceptionInternal(ex, e, headers, status, request);
     }
 
-    @ExceptionHandler(DuplicatedResourceException.class)
-    protected ResponseEntity<Object> handleDuplicatedResourceException(DuplicatedResourceException ex, WebRequest request) {
+    @ExceptionHandler(ResourceException.class)
+    protected ResponseEntity<Object> handleDuplicatedResourceException(ResourceException ex, WebRequest request) {
         ApiException e = new ApiException();
         e.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        e.setTimestamp(LocalDateTime.now());
+        e.setTimestamp(OffsetDateTime.now());
         e.setMessage(ex.getMessage());
 
         return handleExceptionInternal(ex, e, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    protected ResponseEntity<Object> handleDuplicatedResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        ApiException e = new ApiException();
+        e.setStatusCode(HttpStatus.NOT_FOUND.value());
+        e.setTimestamp(OffsetDateTime.now());
+        e.setMessage(ex.getMessage());
+
+        return handleExceptionInternal(ex, e, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     private List<ApiField> getFieldsWithError(BindingResult result) {

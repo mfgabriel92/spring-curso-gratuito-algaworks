@@ -1,6 +1,6 @@
 package com.gabriel.springalgawjava.api.exceptions;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class ApiException {
     private Integer statusCode;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private String message;
     private List<ApiField> fields;
 }
